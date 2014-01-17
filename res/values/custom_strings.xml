@@ -213,10 +213,10 @@
     <string name="button_headsethook_launch_voice_summary">Pressing the headset button will launch voice controls</string>
 
     <!-- Network speed -->
-    <string name="show_network_speed">Network speed indicator</string>
-    <string name="show_network_speed_summary">Show network speed in statusbar</string>
-    <string name="show_network_speed_bits">Show speed as bits per second</string>
-    <string name="show_network_speed_bytes">Show speed as Bytes per second</string>
+    <string name="status_bar_show_network_stats_title">Network traffic indicator</string>
+    <string name="status_bar_show_network_stats_summary">Show network speeds in statusbar</string>
+    <string name="status_bar_network_stats_update_title">Update frequency</string>
+    <string name="status_bar_network_stats_update_summary">How often is indicator updated</string>
 
     <!-- Status Bar Activity Indicators -->
     <string name="show_activity_indicators_on_status_bar_title">Network activity indicator</string>

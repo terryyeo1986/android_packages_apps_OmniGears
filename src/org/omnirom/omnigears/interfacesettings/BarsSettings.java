@@ -36,13 +36,16 @@ import android.provider.Settings.SettingNotFoundException;
 import android.util.Log;
 import android.view.WindowManagerGlobal;
 
+import org.omnirom.omnigears.chameleonos.SeekBarPreference;
+
 public class BarsSettings extends SettingsPreferenceFragment implements
         Preference.OnPreferenceChangeListener {
     private static final String TAG = "BarsSettings";
 
     private static final String STATUS_BAR_BRIGHTNESS_CONTROL = "status_bar_brightness_control";
     private static final String STATUS_BAR_NOTIF_COUNT = "status_bar_notif_count";
-    private static final String STATUS_BAR_TRAFFIC = "status_bar_traffic";
+    private static final String NETWORK_STATS = "network_stats";
+    private static final String NETWORK_STATS_UPDATE_FREQUENCY = "network_stats_update_frequency";
     private static final String STATUS_BAR_NETWORK_ACTIVITY = "status_bar_network_activity";
     private static final String QUICK_PULLDOWN = "quick_pulldown";
     private static final String QUICKSETTINGS_DYNAMIC = "quicksettings_dynamic_row";
@@ -55,7 +58,8 @@ public class BarsSettings extends SettingsPreferenceFragment implements
 
     private CheckBoxPreference mStatusBarBrightnessControl;
     private CheckBoxPreference mStatusBarNotifCount;
-    private CheckBoxPreference mStatusBarTraffic;
+    private CheckBoxPreference mNetworkStats;
+    private SeekBarPreference mNetworkStatsUpdateFrequency;
     private CheckBoxPreference mStatusBarNetworkActivity;
     private CheckBoxPreference mQuickSettingsDynamic;
     private ListPreference mQuickPulldown;
@@ -93,11 +97,16 @@ public class BarsSettings extends SettingsPreferenceFragment implements
                 Settings.System.STATUS_BAR_NOTIF_COUNT, 0) == 1);
         mStatusBarNotifCount.setOnPreferenceChangeListener(this);
 
-        mStatusBarTraffic = (CheckBoxPreference) prefSet.findPreference(STATUS_BAR_TRAFFIC);
-        int intState = Settings.System.getInt(resolver, Settings.System.STATUS_BAR_TRAFFIC, 0);
-        intState = setStatusBarTrafficSummary(intState);
-        mStatusBarTraffic.setChecked(intState > 0);
-        mStatusBarTraffic.setOnPreferenceChangeListener(this);
+        mNetworkStats = (CheckBoxPreference) prefSet.findPreference(NETWORK_STATS);
+        mNetworkStats.setChecked(Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_NETWORK_STATS, 0) == 1);
+        mNetworkStats.setOnPreferenceChangeListener(this);
+
+        mNetworkStatsUpdateFrequency = (SeekBarPreference)
+                prefSet.findPreference(NETWORK_STATS_UPDATE_FREQUENCY);
+        mNetworkStatsUpdateFrequency.setValue(Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_NETWORK_STATS_UPDATE_INTERVAL, 500));
+        mNetworkStatsUpdateFrequency.setOnPreferenceChangeListener(this);
 
         mStatusBarNetworkActivity =
                 (CheckBoxPreference) prefSet.findPreference(STATUS_BAR_NETWORK_ACTIVITY);
@@ -162,23 +171,25 @@ public class BarsSettings extends SettingsPreferenceFragment implements
                     value ? 1 : 0);
         } else if (preference == mStatusBarNotifCount) {
             boolean value = (Boolean) objValue;
-            Settings.System.putInt(resolver, Settings.System.STATUS_BAR_NOTIF_COUNT, value ? 1 : 0);
-        } else if (preference == mStatusBarTraffic) {
-
-            // Increment the state and then update the label
-            int intState = Settings.System.getInt(resolver, Settings.System.STATUS_BAR_TRAFFIC, 0);
-            intState++;
-            intState = setStatusBarTrafficSummary(intState);
-            Settings.System.putInt(resolver, Settings.System.STATUS_BAR_TRAFFIC, intState);
-            if (intState > 1) {return false;}
+            Settings.System.putInt(resolver, Settings.System.STATUS_BAR_NOTIF_COUNT,
+                    value ? 1 : 0);
+        } else if (preference == mNetworkStats) {
+            boolean value = (Boolean) objValue;
+            Settings.System.putInt(resolver, Settings.System.STATUS_BAR_NETWORK_STATS,
+                    value ? 1 : 0);
+        } else if (preference == mNetworkStatsUpdateFrequency) {
+            int i = Integer.valueOf((Integer) objValue);
+            Settings.System.putInt(resolver,
+                    Settings.System.STATUS_BAR_NETWORK_STATS_UPDATE_INTERVAL, i);
+            return true;
         } else if (preference == mStatusBarNetworkActivity) {
             boolean value = (Boolean) objValue;
             Settings.System.putInt(resolver, Settings.System.STATUS_BAR_NETWORK_ACTIVITY,
                     value ? 1 : 0);
         } else if (preference == mQuickSettingsDynamic) {
             boolean value = (Boolean) objValue;
-            Settings.System.putInt(resolver,
-                Settings.System.QUICK_SETTINGS_TILES_ROW, value ? 1 : 0);
+            Settings.System.putInt(resolver, Settings.System.QUICK_SETTINGS_TILES_ROW,
+                    value ? 1 : 0);
         } else if (preference == mQuickPulldown) {
             int statusQuickPulldown = Integer.valueOf((String) objValue);
             Settings.System.putInt(resolver, Settings.System.QS_QUICK_PULLDOWN,
@@ -207,18 +218,5 @@ public class BarsSettings extends SettingsPreferenceFragment implements
             return false;
         }
         return true;
-    }
-
-    private int setStatusBarTrafficSummary(int intState) {
-        // These states must match com.android.systemui.statusbar.policy.Traffic
-        if (intState == 1) {
-            mStatusBarTraffic.setSummary(R.string.show_network_speed_bits);
-        } else if (intState == 2) {
-            mStatusBarTraffic.setSummary(R.string.show_network_speed_bytes);
-        } else {
-            mStatusBarTraffic.setSummary(R.string.show_network_speed_summary);
-            return 0;
-        }
-        return intState;
     }
 }

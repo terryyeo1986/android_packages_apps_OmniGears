@@ -38,16 +38,33 @@
                 android:persistent="false"/>
 
         <CheckBoxPreference
-                android:key="status_bar_traffic"
-                android:title="@string/show_network_speed"
-                android:summary="@string/show_network_speed_summary"
-                android:persistent="false" />
-
-        <CheckBoxPreference
                 android:key="status_bar_network_activity"
                 android:title="@string/show_activity_indicators_on_status_bar_title"
                 android:summary="@string/show_activity_indicators_on_status_bar_summary"
                 android:persistent="false"/>
+
+        <CheckBoxPreference
+                android:key="quicksettings_dynamic_row"
+                android:title="@string/qs_configurable_title"
+                android:summary="@string/qs_configurable_summary"
+                android:persistent="false"/>
+
+        <CheckBoxPreference
+                android:key="network_stats"
+                android:title="@string/status_bar_show_network_stats_title"
+                android:summary="@string/status_bar_show_network_stats_summary"
+                android:persistent="false" />
+
+        <org.omnirom.omnigears.chameleonos.SeekBarPreference
+                android:key="network_stats_update_frequency"
+                android:title="@string/status_bar_network_stats_update_title"
+                android:summary="@string/status_bar_network_stats_update_summary"
+                android:max="2500"
+                settings:interval="50"
+                settings:min="250"
+                settings:unitsLeft=""
+                settings:unitsRight="ms"
+                android:persistent="false" />
 
         <ListPreference
                 android:key="quick_pulldown"
@@ -56,12 +73,6 @@
                 android:entries="@array/quick_pulldown_entries"
                 android:entryValues="@array/quick_pulldown_values"
                 android:persistent="false" />
-
-        <CheckBoxPreference
-                android:key="quicksettings_dynamic_row"
-                android:title="@string/qs_configurable_title"
-                android:summary="@string/qs_configurable_summary"
-                android:persistent="false"/>
 
         <PreferenceScreen
                 android:fragment="com.android.settings.slim.StatusBarClockStyle"
